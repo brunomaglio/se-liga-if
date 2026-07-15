@@ -4,6 +4,7 @@ import { RootStackParamList } from "./types/navigation";
 
 import { HomeScreen } from "../screens/HomeScreen";
 import { SearchScreen } from "../screens/SearchScreen";
+import { ScheduleScreen } from "../screens/ScheduleScreen";
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -24,6 +25,11 @@ export function AppNavigator() {
           name="Search"
           component={SearchScreen}
         />
+
+        <Stack.Screen
+          name="Schedule"
+          component={ScheduleScreen}
+/>
       </Stack.Navigator>
     </NavigationContainer>
   );
