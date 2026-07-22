@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import {
   ActivityIndicator,
   SectionList,
@@ -14,12 +14,17 @@ import { scheduleService } from '../services/scheduleService';
 import type { ScheduleItem } from '../services/mock/types';
 import { PageHeader } from '../shared/components/PageHeader';
 import { ScheduleCard } from '../shared/components/ScheduleCard';
-import { colors, spacing } from '../shared/theme';
+import { colors, spacing, typography } from '../shared/theme';
 
 type ScheduleScreenProps = NativeStackScreenProps<
   RootStackParamList,
   'Schedule'
 >;
+
+type ScheduleSection = {
+  title: string;
+  data: ScheduleItem[];
+};
 
 export function ScheduleScreen({ route, navigation }: ScheduleScreenProps) {
   const { item } = route.params;
@@ -42,38 +47,46 @@ export function ScheduleScreen({ route, navigation }: ScheduleScreenProps) {
     loadSchedules();
   }, [item]);
 
-  const sections = Object.entries(
-    schedules.reduce<Record<string, ScheduleItem[]>>((groups, schedule) => {
-      if (!groups[schedule.day]) {
-        groups[schedule.day] = [];
-      }
+  const sections = useMemo<ScheduleSection[]>(() => {
+    const groupedSchedules = schedules.reduce<Record<string, ScheduleItem[]>>(
+      (groups, schedule) => {
+        if (!groups[schedule.day]) {
+          groups[schedule.day] = [];
+        }
 
-      groups[schedule.day].push(schedule);
+        groups[schedule.day].push(schedule);
 
-      return groups;
-    }, {}),
-  ).map(([day, data]) => ({
-    title: day,
-    data,
-  }));
+        return groups;
+      },
+      {},
+    );
+
+    return Object.entries(groupedSchedules).map(([day, data]) => ({
+      title: day,
+      data,
+    }));
+  }, [schedules]);
 
   return (
     <SafeAreaView style={styles.container}>
-      <PageHeader title="Horários" onBack={() => navigation.goBack()} />
+      <PageHeader
+        title="Horários"
+        subtitle={item}
+        onBack={() => navigation.goBack()}
+      />
 
       <View style={styles.content}>
-        <Text style={styles.itemName}>{item}</Text>
-
         {isLoading ? (
-          <View style={styles.loadingContainer}>
+          <View style={styles.feedbackContainer}>
             <ActivityIndicator size="large" color={colors.primary} />
-            <Text style={styles.loadingText}>Carregando horários...</Text>
+
+            <Text style={styles.feedbackText}>Carregando horários...</Text>
           </View>
         ) : schedules.length === 0 ? (
-          <View style={styles.emptyContainer}>
+          <View style={styles.feedbackContainer}>
             <Text style={styles.emptyTitle}>Nenhum horário disponível</Text>
 
-            <Text style={styles.emptyText}>
+            <Text style={styles.feedbackText}>
               Esta turma ainda não possui horários cadastrados.
             </Text>
           </View>
@@ -82,6 +95,7 @@ export function ScheduleScreen({ route, navigation }: ScheduleScreenProps) {
             sections={sections}
             keyExtractor={(schedule) => schedule.id}
             showsVerticalScrollIndicator={false}
+            stickySectionHeadersEnabled={false}
             contentContainerStyle={styles.listContent}
             renderSectionHeader={({ section }) => (
               <Text style={styles.dayTitle}>{section.title}</Text>
@@ -111,55 +125,39 @@ const styles = StyleSheet.create({
 
   content: {
     flex: 1,
-    padding: spacing.lg,
+    paddingHorizontal: spacing.lg,
   },
 
   listContent: {
+    paddingTop: spacing.sm,
     paddingBottom: spacing.xl,
   },
 
-  itemName: {
-    fontSize: 28,
-    fontWeight: '700',
-    color: colors.text,
-    marginBottom: spacing.md,
-  },
-
   dayTitle: {
-    fontSize: 20,
-    fontWeight: '700',
+    ...typography.h2,
     color: colors.text,
-    marginTop: spacing.md,
+    marginTop: spacing.lg,
     marginBottom: spacing.sm,
   },
 
-  loadingContainer: {
+  feedbackContainer: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
+    paddingHorizontal: spacing.lg,
     gap: spacing.sm,
   },
 
-  loadingText: {
-    fontSize: 15,
+  feedbackText: {
+    ...typography.body,
     color: colors.textSecondary,
-  },
-
-  emptyContainer: {
-    marginTop: spacing.xl,
-    alignItems: 'center',
+    textAlign: 'center',
+    lineHeight: 21,
   },
 
   emptyTitle: {
-    fontSize: 18,
-    fontWeight: '600',
+    ...typography.h2,
     color: colors.text,
-    marginBottom: spacing.sm,
-  },
-
-  emptyText: {
-    fontSize: 15,
-    color: colors.textSecondary,
     textAlign: 'center',
   },
 });

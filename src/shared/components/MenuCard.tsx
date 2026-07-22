@@ -1,6 +1,7 @@
-import { Ionicons } from "@expo/vector-icons";
-import { TouchableOpacity, View, Text, StyleSheet } from "react-native";
-import { colors, spacing } from "../theme";
+import { Ionicons } from '@expo/vector-icons';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
+
+import { borderRadius, colors, shadows, spacing, typography } from '../theme';
 
 type MenuCardProps = {
   icon: keyof typeof Ionicons.glyphMap;
@@ -9,65 +10,97 @@ type MenuCardProps = {
   onPress: () => void;
 };
 
-export function MenuCard({
-  icon,
-  title,
-  description,
-  onPress,
-}: MenuCardProps) {
+export function MenuCard({ icon, title, description, onPress }: MenuCardProps) {
   return (
-    <TouchableOpacity style={styles.container} onPress={onPress}>
+    <Pressable
+      onPress={onPress}
+      style={({ pressed }) => [styles.container, pressed && styles.pressed]}
+    >
       <View style={styles.left}>
-        <Ionicons name={icon} size={28} color={colors.primary} />
+        <View style={styles.iconContainer}>
+          <Ionicons name={icon} size={28} color={colors.primary} />
+        </View>
 
         <View style={styles.textContainer}>
           <Text style={styles.title}>{title}</Text>
+
           <Text style={styles.description}>{description}</Text>
         </View>
       </View>
 
-      <Ionicons
-        name="chevron-forward"
-        size={22}
-        color={colors.textSecondary}
-      />
-    </TouchableOpacity>
+      <View style={styles.chevronContainer}>
+        <Ionicons
+          name="chevron-forward"
+          size={20}
+          color={colors.textSecondary}
+        />
+      </View>
+    </Pressable>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+
     backgroundColor: colors.surface,
-    borderRadius: 16,
+    borderRadius: borderRadius.lg,
     padding: spacing.md,
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
     marginTop: spacing.md,
+
     borderWidth: 1,
     borderColor: colors.border,
+
+    ...shadows.card,
+  },
+
+  pressed: {
+    opacity: 0.8,
+    transform: [{ scale: 0.98 }],
   },
 
   left: {
-    flexDirection: "row",
-    alignItems: "center",
     flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+
+  iconContainer: {
+    width: 52,
+    height: 52,
+    borderRadius: borderRadius.md,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: colors.background,
   },
 
   textContainer: {
-    marginLeft: spacing.md,
     flex: 1,
+    marginLeft: spacing.md,
   },
 
   title: {
-    fontSize: 18,
-    fontWeight: "600",
+    ...typography.h2,
+    fontSize: 17,
     color: colors.text,
+    marginBottom: spacing.xs,
   },
 
   description: {
-    fontSize: 14,
+    ...typography.caption,
+    lineHeight: 18,
     color: colors.textSecondary,
-    marginTop: 2,
+  },
+
+  chevronContainer: {
+    width: 34,
+    height: 34,
+    borderRadius: borderRadius.pill,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginLeft: spacing.sm,
+    backgroundColor: colors.background,
   },
 });

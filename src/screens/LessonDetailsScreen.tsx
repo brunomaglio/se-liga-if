@@ -1,11 +1,18 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { Ionicons } from '@expo/vector-icons';
 
 import type { RootStackParamList } from '../navigation/types/navigation';
+import { InfoRow } from '../shared/components/InfoRow';
 import { PageHeader } from '../shared/components/PageHeader';
-import { colors, spacing } from '../shared/theme';
+import {
+  borderRadius,
+  colors,
+  shadows,
+  spacing,
+  typography,
+} from '../shared/theme';
 
 type LessonDetailsScreenProps = NativeStackScreenProps<
   RootStackParamList,
@@ -22,47 +29,51 @@ export function LessonDetailsScreen({
     <SafeAreaView style={styles.container}>
       <PageHeader
         title="Detalhes da aula"
+        subtitle={schedule.subject}
         onBack={() => navigation.goBack()}
       />
 
-      <View style={styles.content}>
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.content}
+      >
         <View style={styles.subjectCard}>
           <View style={styles.iconContainer}>
-            <Ionicons name="school-outline" size={28} color={colors.primary} />
+            <Ionicons name="school-outline" size={30} color={colors.primary} />
           </View>
 
           <View style={styles.subjectContent}>
             <Text style={styles.subject}>{schedule.subject}</Text>
-            <Text style={styles.professor}>{schedule.professor}</Text>
           </View>
         </View>
 
         <View style={styles.detailsCard}>
-          <DetailRow icon="calendar-outline" text={schedule.day} />
+          <Text style={styles.sectionTitle}>Informações da aula</Text>
 
-          <DetailRow
-            icon="time-outline"
-            text={`${schedule.startTime} - ${schedule.endTime}`}
-          />
+          <View style={styles.detailsList}>
+            <InfoRow
+              icon="person-outline"
+              label="Professor"
+              value={schedule.professor}
+            />
 
-          <DetailRow icon="location-outline" text={schedule.room} />
+            <InfoRow icon="calendar-outline" label="Dia" value={schedule.day} />
+
+            <InfoRow
+              icon="time-outline"
+              label="Horário"
+              value={`${schedule.startTime} — ${schedule.endTime}`}
+            />
+
+            <InfoRow
+              icon="location-outline"
+              label="Sala"
+              value={schedule.room}
+            />
+          </View>
         </View>
-      </View>
+      </ScrollView>
     </SafeAreaView>
-  );
-}
-
-type DetailRowProps = {
-  icon: keyof typeof Ionicons.glyphMap;
-  text: string;
-};
-
-function DetailRow({ icon, text }: DetailRowProps) {
-  return (
-    <View style={styles.detailRow}>
-      <Ionicons name={icon} size={22} color={colors.textSecondary} />
-      <Text style={styles.detailText}>{text}</Text>
-    </View>
   );
 }
 
@@ -74,24 +85,29 @@ const styles = StyleSheet.create({
 
   content: {
     padding: spacing.lg,
+    paddingBottom: spacing.xl,
     gap: spacing.lg,
   },
 
   subjectCard: {
     flexDirection: 'row',
     alignItems: 'center',
+    gap: spacing.md,
+
     backgroundColor: colors.surface,
-    borderRadius: 16,
+    borderRadius: borderRadius.lg,
     padding: spacing.lg,
+
     borderWidth: 1,
     borderColor: colors.border,
-    gap: spacing.md,
+
+    ...shadows.card,
   },
 
   iconContainer: {
-    width: 56,
-    height: 56,
-    borderRadius: 16,
+    width: 58,
+    height: 58,
+    borderRadius: borderRadius.lg,
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: colors.background,
@@ -102,35 +118,30 @@ const styles = StyleSheet.create({
   },
 
   subject: {
-    fontSize: 22,
-    fontWeight: '700',
+    ...typography.h1,
     color: colors.text,
     marginBottom: spacing.xs,
   },
 
-  professor: {
-    fontSize: 15,
-    color: colors.textSecondary,
-  },
-
   detailsCard: {
     backgroundColor: colors.surface,
-    borderRadius: 16,
+    borderRadius: borderRadius.lg,
     padding: spacing.lg,
+
     borderWidth: 1,
     borderColor: colors.border,
-    gap: spacing.lg,
+
+    ...shadows.card,
   },
 
-  detailRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.md,
-  },
-
-  detailText: {
-    flex: 1,
-    fontSize: 16,
+  sectionTitle: {
+    ...typography.h2,
+    fontSize: 18,
     color: colors.text,
+    marginBottom: spacing.lg,
+  },
+
+  detailsList: {
+    gap: spacing.lg,
   },
 });

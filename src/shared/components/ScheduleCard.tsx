@@ -1,7 +1,8 @@
-import { Pressable, StyleSheet, Text } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import type { ScheduleItem } from '../../services/mock/types';
-import { colors, spacing } from '../theme';
+import { borderRadius, colors, shadows, spacing, typography } from '../theme';
 
 type ScheduleCardProps = {
   schedule: ScheduleItem;
@@ -9,56 +10,135 @@ type ScheduleCardProps = {
 };
 
 export function ScheduleCard({ schedule, onPress }: ScheduleCardProps) {
+  const isPressable = Boolean(onPress);
+
   return (
     <Pressable
       onPress={onPress}
-      disabled={!onPress}
-      style={({ pressed }) => [styles.container, pressed && styles.pressed]}
+      disabled={!isPressable}
+      accessibilityRole={isPressable ? 'button' : undefined}
+      accessibilityLabel={`${schedule.subject}, das ${schedule.startTime} às ${schedule.endTime}`}
+      style={({ pressed }) => [
+        styles.container,
+        pressed && isPressable && styles.pressed,
+      ]}
     >
-      <Text style={styles.time}>
-        {schedule.startTime} — {schedule.endTime}
-      </Text>
+      <View style={styles.content}>
+        <View style={styles.timeContainer}>
+          <Ionicons name="time-outline" size={18} color={colors.primary} />
 
-      <Text style={styles.subject}>{schedule.subject}</Text>
+          <Text style={styles.time}>
+            {schedule.startTime} — {schedule.endTime}
+          </Text>
+        </View>
 
-      <Text style={styles.details}>
-        Prof. {schedule.professor} • Sala {schedule.room}
-      </Text>
+        <Text style={styles.subject}>{schedule.subject}</Text>
+
+        <View style={styles.detailsContainer}>
+          <View style={styles.detailRow}>
+            <Ionicons
+              name="person-outline"
+              size={17}
+              color={colors.textSecondary}
+            />
+
+            <Text style={styles.detailText}>Prof. {schedule.professor}</Text>
+          </View>
+
+          <View style={styles.detailRow}>
+            <Ionicons
+              name="location-outline"
+              size={17}
+              color={colors.textSecondary}
+            />
+
+            <Text style={styles.detailText}>Sala {schedule.room}</Text>
+          </View>
+        </View>
+      </View>
+
+      {isPressable ? (
+        <View style={styles.chevronContainer}>
+          <Ionicons
+            name="chevron-forward"
+            size={20}
+            color={colors.textSecondary}
+          />
+        </View>
+      ) : null}
     </Pressable>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
+    flexDirection: 'row',
+    alignItems: 'center',
+
     backgroundColor: colors.surface,
-    borderRadius: 12,
+    borderRadius: borderRadius.lg,
     padding: spacing.md,
     marginBottom: spacing.sm,
+
     borderWidth: 1,
     borderColor: colors.border,
+
+    ...shadows.card,
   },
 
   pressed: {
-    opacity: 0.7,
+    opacity: 0.8,
     transform: [{ scale: 0.98 }],
   },
 
+  content: {
+    flex: 1,
+  },
+
+  timeContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.xs,
+    marginBottom: spacing.sm,
+  },
+
   time: {
-    fontSize: 15,
+    ...typography.caption,
     fontWeight: '700',
     color: colors.primary,
-    marginBottom: spacing.xs,
   },
 
   subject: {
+    ...typography.h2,
     fontSize: 17,
-    fontWeight: '600',
     color: colors.text,
-    marginBottom: spacing.xs,
+    marginBottom: spacing.md,
   },
 
-  details: {
+  detailsContainer: {
+    gap: spacing.sm,
+  },
+
+  detailRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+  },
+
+  detailText: {
+    flex: 1,
+    ...typography.body,
     fontSize: 14,
     color: colors.textSecondary,
+  },
+
+  chevronContainer: {
+    width: 34,
+    height: 34,
+    borderRadius: borderRadius.pill,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginLeft: spacing.md,
+    backgroundColor: colors.background,
   },
 });
