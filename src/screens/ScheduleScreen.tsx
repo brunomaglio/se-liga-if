@@ -9,116 +9,116 @@ import { colors, spacing } from "../shared/theme";
 import { mockSchedules } from "../services/mock/schedules";
 
 type ScheduleScreenProps = NativeStackScreenProps<
-  RootStackParamList,
-  "Schedule"
+    RootStackParamList,
+    "Schedule"
 >;
 
 export function ScheduleScreen({
-  route,
-  navigation,
+    route,
+    navigation,
 }: ScheduleScreenProps) {
-  const { item } = route.params;
-  const schedules = mockSchedules[item] ?? [];
-  const sections = Object.entries(
-  schedules.reduce<Record<string, typeof schedules>>(
-    (groups, schedule) => {
-      if (!groups[schedule.day]) {
-        groups[schedule.day] = [];
-      }
+    const { item } = route.params;
+    const schedules = mockSchedules[item] ?? [];
+    const sections = Object.entries(
+        schedules.reduce<Record<string, typeof schedules>>(
+            (groups, schedule) => {
+                if (!groups[schedule.day]) {
+                    groups[schedule.day] = [];
+                }
 
-      groups[schedule.day].push(schedule);
+                groups[schedule.day].push(schedule);
 
-      return groups;
-    },
-    {}
-  )
-).map(([day, data]) => ({
-  title: day,
-  data,
-}));
+                return groups;
+            },
+            {}
+        )
+    ).map(([day, data]) => ({
+        title: day,
+        data,
+    }));
 
-  return (
-    <SafeAreaView style={styles.container}>
-      <PageHeader
-        title="Horários"
-        onBack={() => navigation.goBack()}
-      />
+    return (
+        <SafeAreaView style={styles.container}>
+            <PageHeader
+                title="Horários"
+                onBack={() => navigation.goBack()}
+            />
 
-      <View style={styles.content}>
-        <Text style={styles.itemName}>{item}</Text>
+            <View style={styles.content}>
+                <Text style={styles.itemName}>{item}</Text>
 
-        {schedules.length === 0 ? (
-  <View style={styles.emptyContainer}>
-    <Text style={styles.emptyTitle}>
-      Nenhum horário disponível
-    </Text>
+                {schedules.length === 0 ? (
+                    <View style={styles.emptyContainer}>
+                        <Text style={styles.emptyTitle}>
+                            Nenhum horário disponível
+                        </Text>
 
-    <Text style={styles.emptyText}>
-      Esta turma ainda não possui horários cadastrados.
-    </Text>
-  </View>
-) : (
-  <SectionList
-    sections={sections}
-    keyExtractor={(schedule) => schedule.id}
-    showsVerticalScrollIndicator={false}
-    renderSectionHeader={({ section }) => (
-      <Text style={styles.dayTitle}>
-        {section.title}
-      </Text>
-    )}
-    renderItem={({ item: schedule }) => (
-      <ScheduleCard schedule={schedule} />
-    )}
-  />
-)}
-      </View>
-    </SafeAreaView>
-  );
+                        <Text style={styles.emptyText}>
+                            Esta turma ainda não possui horários cadastrados.
+                        </Text>
+                    </View>
+                ) : (
+                    <SectionList
+                        sections={sections}
+                        keyExtractor={(schedule) => schedule.id}
+                        showsVerticalScrollIndicator={false}
+                        renderSectionHeader={({ section }) => (
+                            <Text style={styles.dayTitle}>
+                                {section.title}
+                            </Text>
+                        )}
+                        renderItem={({ item: schedule }) => (
+                            <ScheduleCard schedule={schedule} />
+                        )}
+                    />
+                )}
+            </View>
+        </SafeAreaView>
+    );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.background,
-  },
+    container: {
+        flex: 1,
+        backgroundColor: colors.background,
+    },
 
-  content: {
-    flex: 1,
-    padding: spacing.lg,
-  },
+    content: {
+        flex: 1,
+        padding: spacing.lg,
+    },
 
-  itemName: {
-    fontSize: 28,
-    fontWeight: "700",
-    color: colors.text,
-    marginBottom: spacing.md,
-  },
+    itemName: {
+        fontSize: 28,
+        fontWeight: "700",
+        color: colors.text,
+        marginBottom: spacing.md,
+    },
 
-  dayTitle: {
-  fontSize: 20,
-  fontWeight: "700",
-  color: colors.text,
-  marginTop: spacing.md,
-  marginBottom: spacing.sm,
-},
+    dayTitle: {
+        fontSize: 20,
+        fontWeight: "700",
+        color: colors.text,
+        marginTop: spacing.md,
+        marginBottom: spacing.sm,
+    },
 
-emptyContainer: {
-  marginTop: spacing.xl,
-  alignItems: "center",
-},
+    emptyContainer: {
+        marginTop: spacing.xl,
+        alignItems: "center",
+    },
 
-emptyTitle: {
-  fontSize: 18,
-  fontWeight: "600",
-  color: colors.text,
-  marginBottom: spacing.sm,
-},
+    emptyTitle: {
+        fontSize: 18,
+        fontWeight: "600",
+        color: colors.text,
+        marginBottom: spacing.sm,
+    },
 
-emptyText: {
-  fontSize: 15,
-  color: colors.textSecondary,
-  textAlign: "center",
-},
+    emptyText: {
+        fontSize: 15,
+        color: colors.textSecondary,
+        textAlign: "center",
+    },
 
 });

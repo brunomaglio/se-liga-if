@@ -29,7 +29,7 @@ export function AppNavigator() {
         <Stack.Screen
           name="Schedule"
           component={ScheduleScreen}
-/>
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );
