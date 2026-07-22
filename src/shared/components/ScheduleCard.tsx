@@ -1,58 +1,64 @@
-import { StyleSheet, Text, View } from "react-native";
+import { Pressable, StyleSheet, Text } from 'react-native';
 
-import type { ScheduleItem } from "../../services/mock/types";
-import { colors, spacing } from "../theme";
+import type { ScheduleItem } from '../../services/mock/types';
+import { colors, spacing } from '../theme';
 
 type ScheduleCardProps = {
-    schedule: ScheduleItem;
+  schedule: ScheduleItem;
+  onPress?: () => void;
 };
 
-export function ScheduleCard({
-    schedule,
-}: ScheduleCardProps) {
-    return (
-        <View style={styles.container}>
-            <Text style={styles.time}>
-                {schedule.startTime} — {schedule.endTime}
-            </Text>
+export function ScheduleCard({ schedule, onPress }: ScheduleCardProps) {
+  return (
+    <Pressable
+      onPress={onPress}
+      disabled={!onPress}
+      style={({ pressed }) => [styles.container, pressed && styles.pressed]}
+    >
+      <Text style={styles.time}>
+        {schedule.startTime} — {schedule.endTime}
+      </Text>
 
-            <Text style={styles.subject}>
-                {schedule.subject}
-            </Text>
+      <Text style={styles.subject}>{schedule.subject}</Text>
 
-            <Text style={styles.details}>
-                Prof. {schedule.professor} • Sala {schedule.room}
-            </Text>
-        </View>
-    );
+      <Text style={styles.details}>
+        Prof. {schedule.professor} • Sala {schedule.room}
+      </Text>
+    </Pressable>
+  );
 }
 
 const styles = StyleSheet.create({
-    container: {
-        backgroundColor: colors.surface,
-        borderRadius: 12,
-        padding: spacing.md,
-        marginBottom: spacing.sm,
-        borderWidth: 1,
-        borderColor: colors.border,
-    },
+  container: {
+    backgroundColor: colors.surface,
+    borderRadius: 12,
+    padding: spacing.md,
+    marginBottom: spacing.sm,
+    borderWidth: 1,
+    borderColor: colors.border,
+  },
 
-    time: {
-        fontSize: 15,
-        fontWeight: "700",
-        color: colors.primary,
-        marginBottom: spacing.xs,
-    },
+  pressed: {
+    opacity: 0.7,
+    transform: [{ scale: 0.98 }],
+  },
 
-    subject: {
-        fontSize: 17,
-        fontWeight: "600",
-        color: colors.text,
-        marginBottom: spacing.xs,
-    },
+  time: {
+    fontSize: 15,
+    fontWeight: '700',
+    color: colors.primary,
+    marginBottom: spacing.xs,
+  },
 
-    details: {
-        fontSize: 14,
-        color: colors.textSecondary,
-    },
+  subject: {
+    fontSize: 17,
+    fontWeight: '600',
+    color: colors.text,
+    marginBottom: spacing.xs,
+  },
+
+  details: {
+    fontSize: 14,
+    color: colors.textSecondary,
+  },
 });
